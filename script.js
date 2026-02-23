@@ -1,129 +1,202 @@
-const addApplicationBtn = document.getElementById("add-btn");
+// Getting all the HTML elements for DOM
+
+//Top part
+const userName = document.getElementById("userName");
+const plusAddApplicationBtn = document.getElementById("plusAddApplicationBtn");
+const signOutBtn = document.getElementById("signOutBtn");
+
+//Form
 const form = document.getElementById("form");
-const companyName = document.getElementById("comp-name");
-const jobTitle = document.getElementById("job-title");
-const jobTypeSelect = document.getElementById("jobType");
-const jobApplicationStatus = document.getElementById("status");
-const calendar = document.getElementById("calendar");
+const compName = document.getElementById("compName");
+const position = document.getElementById("position");
+const jobType = document.getElementById("jobType");
+const jobStatus = document.getElementById('jobStatus');
+const date = document.getElementById("date");
 const resume = document.getElementById("resume");
-const formCancelBtn = document.getElementById("form-cancel-button");
-const saveAppBtn = document.getElementById("save-app-btn");
-const totalApplications = document.getElementById("total-apps");
+const message = document.getElementById("message");
+const addApplicationBtn = document.getElementById("addApplicationBtn");
+const cancelBtn = document.getElementById("cancelBtn");
+
+//Middle part
+const totalApplications = document.getElementById("totalApplications");
 const pending = document.getElementById("pending");
 const interviews = document.getElementById("interviews");
 const rejected = document.getElementById("rejected");
-
-const displayApplication = document.getElementById("applications");
-
-const addedApplications = document.getElementById("added-application");
-
-const userNotes = document.getElementById("user-notes");
-
-// Create storage to save applications
-let applications = [];
+const totalCount = document.getElementById("count")
 
 
+//Bottom part
+const bottomm = document.getElementById("bottomm");
+const displayList = document.getElementById("displayList");
+const bottomWillhide = document.getElementById("bottom-will-hide");
+
+//UL buttons
+const editBtn = document.getElementById("editBtn")
+const deletebtn = document.getElementById("deleteBtn")
 
 
-// Validate form
-function validateForm(){
-    if(companyName.value === ""){
-        alert("Please enter company name applied to")
-        return false;
+// Storage for form data
+let data = [];
+let editIndex = null;
+
+
+//Form validation (function)------------
+
+function formValidation(){
+
+if(compName.value === ""){
+    alert("Please enter company name");
+    return false;
+}
+
+if(position.value === ""){
+    alert("Please enter company position applying for");
+    return false;
+}
+
+if(date.value === ""){
+    alert("Please select date of apply")
+    return false;
+}
+return true;
+
+}
+
+// ===============================
+// Render List (Single Source of Truth)
+// ===============================
+
+function renderList() {
+
+    displayList.innerHTML = "";
+
+    if (data.length === 0) {
+        bottomWillhide.style.display = "block";
+    } else {
+        bottomWillhide.style.display = "none";
     }
-    if(jobTitle.value === ""){
-        alert("Please enter job title")
-        return false;
-    }
-    if(jobTypeSelect.value === ""){
-        alert("Please select job type")
-        return false;
-    }
-    if(jobApplicationStatus.value === ""){
-        alert("Please select application status")
-        return false;
-    }
-    if(calendar.value === ""){
-        alert("Please select a date ")
-        return false;
-    }
-    if(resume.value === ""){
-        alert("Please upload a resume")
-        return false;
-    }
-    return true; // form is valid
+
+    data.forEach(function(item, index) {
+
+        const li = document.createElement("li");
+
+        li.innerHTML = `
+            <strong>${item.company}</strong><br>
+            <strong>${item.position}</strong><br>
+            ${item.type} | ${item.status} | ${item.date}
+            ${item.notes ? `<p><strong>Notes:</strong> ${item.notes}</p>` : ""}
+            ${item.resume ? `<p><strong>Resume:</strong> ${item.resume}</p>` : ""}
+            <button class="edit-btn">Edit</button>
+            <button class="delete-btn">Delete</button>
+        `;
+
+        // Edit button
+        const editBtn = li.querySelector(".edit-btn");
+        editBtn.addEventListener("click", function() {
+            loadFormForEdit(index);
+        });
+
+        // Delete button
+        const deleteBtn = li.querySelector(".delete-btn");
+        deleteBtn.addEventListener("click", function() {
+            deleteApplication(index);
+        });
+
+        displayList.appendChild(li);
+    });
+
+    totalCount.textContent = data.length;
 }
 
 
+// ===============================
+// Add / Update Application
+// ===============================
 
+function formDataStoring() {
 
+    if (!formValidation()) return;
 
+    const formData = {
+        company: compName.value.trim(),
+        position: position.value.trim(),
+        type: jobType.value,
+        status: jobStatus.value,
+        date: date.value,
+        resume: resume.value.trim(),
+        notes: message.value.trim()
+    };
 
-//Handle add application button
-saveAppBtn.addEventListener("click", function(event){
-    event.preventDefault(); //stops form submission
-
-//Stop if invalid
-    if(!validateForm()){
-        return;
+    // If editing
+    if (editIndex !== null) {
+        data[editIndex] = formData;
+        editIndex = null;
+    } 
+    // If new
+    else {
+        data.push(formData);
     }
 
-// Create application object
-const applicationData = {
-    company: companyName.value,
-    title: jobTitle.value,
-    type: jobTypeSelect.value,
-    status: jobApplicationStatus.value,
-    date: calendar.value,
-    resume: resume.value
-}
+    renderList();
 
-//store applicaiton
-applications.push(applicationData);
-
-//Update total application count
-function updateTotalApplications(){
-    totalApplications.textContent = `Total Applications ${applications.length}`;
-}
-
-//Update UI Count
-updateTotalApplications()
-
-
-//Create li to show added application
-const li = document.createElement("li");
-let liContent = `
-<h2>Recent Applications</h2>
-  <i class="fa-duotone fa-solid fa-briefcase"></i> 
-  <strong>${applicationData.company}</strong><br>
-  ${applicationData.title}<br>
-  Type: ${applicationData.type}<br>
-  Status: ${applicationData.status}<br>
-  Date: ${applicationData.date}<br>
-  Resume: ${applicationData.resume}<br>
-`;
-
-if(userNotes.value.trim() !== ""){
-    liContent += `<strong>Notes:</strong> ${userNotes.value}<br>`;
+    form.reset();
+    form.style.display = "none";
 }
 
 
-li.innerHTML = liContent
+// ===============================
+// Load Data Into Form (Edit Mode)
+// ===============================
 
-//Append to ul
-addedApplications.appendChild(li);
+function loadFormForEdit(index) {
+
+    const item = data[index];
+
+    compName.value = item.company;
+    position.value = item.position;
+    jobType.value = item.type;
+    jobStatus.value = item.status;
+    date.value = item.date;
+    resume.value = item.resume;
+    message.value = item.notes;
+
+    editIndex = index;
+
+    form.style.display = "block";
+}
 
 
-//clear form
-form.reset();
+// ===============================
+// Delete Application
+// ===============================
 
-//Remove empty application footer
-displayApplication.style.display = "none"
+function deleteApplication(index) {
 
+    data.splice(index, 1);
+
+    renderList();
+}
+
+
+// ===============================
+// Event Listeners
+// ===============================
+
+// Show form
+plusAddApplicationBtn.addEventListener("click", function() {
+    form.style.display = "block";
 });
 
+// Cancel form
+cancelBtn.addEventListener("click", function(e) {
+    e.preventDefault();
+    form.reset();
+    form.style.display = "none";
+    editIndex = null;
+});
 
-
-
-
-
+// Submit form
+addApplicationBtn.addEventListener("click", function(e) {
+    e.preventDefault();
+    formDataStoring();
+});

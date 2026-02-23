@@ -3,78 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project: Job Application Tracker</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Appliora</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
+
 </head>
 <body>
-<header>
-    <h1>Job Application Tracker</h1>
-
-    <div class="header-buttons">
-    <button id="add-btn">+ Add Application</button>
-    <button id="sign-out-btn">Sign out</button>
+    <!-- Top part header-->
+    <div class="top">
+            <h1>Appliora</h1>
+            <h5>Your job application tracker</h5>
+            <p>Welcome back<span id="userName"></span></p>
+        
+        <button id="plusAddApplicationBtn" class="align-right-top">+ Add Application</button>
+        <button id="signOutBtn" class="align-right-top"><i class="fa-solid fa-arrow-right-from-bracket"></i>Sign out</button>   
     </div>
-    
-    </header>
-    
-    <form id="form">
-        <h3>Add New Application</h3>
-        <label for="comp-name">Company Name *</label>
-        <input type="text" id="comp-name">
-        <label for="job-title">Job Title *</label>
-        <input type="text" id="job-title">
-        <label>Job Type</label>
+    <!--header ends here--> 
+
+    <!-- Form -->
+     <form id="form" style="display: none;"> ------------
+        <label for="compName">Company name *</label>
+        <input type="text" id="compName">
+
+        <label for="position">Position *</label>
+        <input type="text" id="position">
+
+
+        <label for="jobType">Job type</label>
         <select id="jobType">
-            <option value="internship">Internship</option>
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
+            <option>Internship</option>
+            <option>Full-time</option>
+            <option>Part-time</option>
+            <option>Contract</option>
+
         </select>
 
-        <label>Status</label>
-        <select id="status">
-            <option value="applied">Applied</option>
-            <option value="interview">Interview</option>
-            <option value="rejected">Rejected</option>
-            <option value="other">Other</option>
+        <label for="jobStatus">Status</label>
+        <select id="jobStatus">
+            <option>Applied</option>
+            <option>Interview</option>
+            <option>Rejected</option>
+            <option>Other</option>
         </select>
 
-        <label for="calendar">Application Date</label>
-        <input type="date" id="calendar" name="app-date" value="2026-02-20" min="2020-01-01" max="2030-12-31">
+        <label for="date">Application Date</label>
+        <input type="date" id="date">
 
         <label for="resume">Resume used</label>
-        <input type="file" id="resume" name="resume" accept="image/png, image/jpeg, .pdf" >
-        <br>
+        <input type="text" id="resume" placeholder="e.g. Resume_v2.pdf">
 
-        <label for="user-notes">Notes</label>
-        <textarea id="user-notes" name="notes-content" rows="4" cols="50"></textarea>
-        <button id="form-cancel-button" class="form-button">Cancel</button>
-        <button id="save-app-btn" class="form-button">Add Application</button>
-
-    </form>
-
-    
+        <label for="message">Notes</label>
+        <textarea id="message" name="message" rows="4" cols="50"></textarea>
 
 
-<main>
-    <div class="application-status">
-        <section id="total-apps">Total Applications</section>
-        <section id="pending">Pending</section>
-        <section id="interviews">Interviews</section>
-        <section id="rejected">Rejected</section>
+       <button id="addApplicationBtn">Add Application</button>
+       <button id="cancelBtn">Cancel</button>
+     </form>
+
+    <!--Middle part-->
+    <div class="middle">
+        <div id="totalApplications">
+            <h2>Total Applications</h2>
+            <span id="count"><i class="fa-solid fa-briefcase"></i> 0</span>
+        </div>
+        <div id="pending">
+            <h2>Pending</h2>
+            <span><i class="fa-regular fa-clock" style="color: rgb(255, 212, 59);"> 0</i></span>
+        </div>
+        <div id="interviews">
+            <h2>Interviews</h2>
+            <span><i class="fa-regular fa-circle-check"></i> 0</span>
+       </div>
+       <div id="rejected">
+           <h2>Rejected</h2>
+           <span><i class="fa-regular fa-circle-xmark"></i> 0</span>
+       </div>
+
+
+    <!--Bottom part-->
+    <div class="bottom" id="bottomm">
+        <div id="bottom-will-hide">
+       <h1><i class="fa-regular fa-file"></i></h1>
+       <h3>No applications yet</h3>
+       <p>Start tracking your job application by clicking the "Add Application" button above</p>
+       </div>
+       <ul id="displayList"></ul>
+       <button id="editBtn" style="display: none;">Edit</button>
+        <button id="deleteBtn" style="display: none;">Delete</button>
     </div>
-
-<div id="applications">
-    <h1><i class="fa-regular fa-file"></i></h1>
-    <h2>No applicaions yet</h2>
-    <p>Start tracking your job application by clicking the "Add Application" button above.</p>
-</div>
-
-<ul id="added-application"></ul>
-
-</main>
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
