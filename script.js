@@ -17,6 +17,9 @@ const message = document.getElementById("message");
 const addApplicationBtn = document.getElementById("addApplicationBtn");
 const cancelBtn = document.getElementById("cancelBtn");
 
+const rejectionContainer = document.getElementById("rejectionContainer");
+const rejectionReason = document.getElementById("rejectionReason");
+
 //Middle part
 const totalApplications = document.getElementById("totalApplications");
 const pending = document.getElementById("pending");
@@ -31,8 +34,8 @@ const displayList = document.getElementById("displayList");
 const bottomWillhide = document.getElementById("bottom-will-hide");
 
 //UL buttons
-const editBtn = document.getElementById("editBtn")
-const deletebtn = document.getElementById("deleteBtn")
+// const editBtn = document.getElementById("editBtn")
+// const deletebtn = document.getElementById("deleteBtn")
 
 
 // Storage for form data
@@ -86,6 +89,7 @@ function renderList() {
             ${item.type} | ${item.status} | ${item.date}
             ${item.notes ? `<p><strong>Notes:</strong> ${item.notes}</p>` : ""}
             ${item.resume ? `<p><strong>Resume:</strong> ${item.resume}</p>` : ""}
+            ${item.rejectionReason ? `<p><strong>Rejection Reason:</strong> ${item.rejectionReason}</p>` : ""}
             <button class="edit-btn">Edit</button>
             <button class="delete-btn">Delete</button>
         `;
@@ -117,6 +121,7 @@ function formDataStoring() {
 
     if (!formValidation()) return;
 
+
     const formData = {
         company: compName.value.trim(),
         position: position.value.trim(),
@@ -124,8 +129,14 @@ function formDataStoring() {
         status: jobStatus.value,
         date: date.value,
         resume: resume.value.trim(),
-        notes: message.value.trim()
+        notes: message.value.trim(),
+        rejectionReason: jobStatus.value === "Rejected" 
+        ? rejectionReason.value.trim() 
+        : ""
     };
+
+
+
 
     // If editing
     if (editIndex !== null) {
@@ -159,6 +170,14 @@ function loadFormForEdit(index) {
     date.value = item.date;
     resume.value = item.resume;
     message.value = item.notes;
+
+    if (item.status === "Rejected") {
+        rejectionContainer.style.display = "block";
+        rejectionReason.value = item.rejectionReason;
+    } else {
+        rejectionContainer.style.display = "none";
+        rejectionReason.value = "";
+    }
 
     editIndex = index;
 
@@ -199,4 +218,16 @@ cancelBtn.addEventListener("click", function(e) {
 addApplicationBtn.addEventListener("click", function(e) {
     e.preventDefault();
     formDataStoring();
+});
+
+//Rejection event listener
+jobStatus.addEventListener("change", function() {
+
+    if (jobStatus.value === "Rejected") {
+        rejectionContainer.style.display = "block";
+    } else {
+        rejectionContainer.style.display = "none";
+        rejectionReason.value = "";
+    }
+
 });

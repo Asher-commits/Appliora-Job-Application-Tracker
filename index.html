@@ -45,6 +45,12 @@
             <option>Rejected</option>
             <option>Other</option>
         </select>
+      
+      
+        <div id="rejectionContainer" style="display:none;">
+    <label for="rejectionReason">Rejection Reason:</label>
+    <textarea id="rejectionReason" rows="3"></textarea>
+</div>
 
         <label for="date">Application Date</label>
         <input type="date" id="date">
@@ -88,9 +94,6 @@
        <p>Start tracking your job application by clicking the "Add Application" button above</p>
        </div>
        <ul id="displayList"></ul>
-       <button id="editBtn" style="display: none;">Edit</button>
-        <button id="deleteBtn" style="display: none;">Delete</button>
-    </div>
     <script src="script.js"></script>
 </body>
 </html>
