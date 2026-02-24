@@ -33,10 +33,6 @@ const bottomm = document.getElementById("bottomm");
 const displayList = document.getElementById("displayList");
 const bottomWillhide = document.getElementById("bottom-will-hide");
 
-//UL buttons
-// const editBtn = document.getElementById("editBtn")
-// const deletebtn = document.getElementById("deleteBtn")
-
 
 // Storage for form data
 let data = [];
@@ -66,7 +62,7 @@ return true;
 }
 
 // ===============================
-// Render List (Single Source of Truth)
+// Render List 
 // ===============================
 
 function renderList() {
@@ -94,7 +90,7 @@ function renderList() {
             <button class="delete-btn">Delete</button>
         `;
 
-        // Edit button
+        // Edit application button
         const editBtn = li.querySelector(".edit-btn");
         editBtn.addEventListener("click", function() {
             loadFormForEdit(index);
@@ -134,9 +130,7 @@ function formDataStoring() {
         ? rejectionReason.value.trim() 
         : ""
     };
-
-
-
+    
 
     // If editing
     if (editIndex !== null) {
@@ -180,6 +174,9 @@ function loadFormForEdit(index) {
     }
 
     editIndex = index;
+    
+    //Change button text
+    addApplicationBtn.textContent = "Update Application"
 
     form.style.display = "block";
 }
