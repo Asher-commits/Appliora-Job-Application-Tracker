@@ -22,10 +22,13 @@ const rejectionReason = document.getElementById("rejectionReason");
 
 //Middle part
 const totalApplications = document.getElementById("totalApplications");
-const pending = document.getElementById("pending");
 const interviews = document.getElementById("interviews");
 const rejected = document.getElementById("rejected");
-const totalCount = document.getElementById("count")
+const other = document.getElementById("other");
+const totalCount = document.getElementById("count");
+const rejCount = document.getElementById("rej-count")
+const intCount = document.getElementById("int-count")
+const otherCount =  document.getElementById("other-count")
 
 
 //Bottom part
@@ -37,6 +40,14 @@ const bottomWillhide = document.getElementById("bottom-will-hide");
 // Storage for form data
 let data = [];
 let editIndex = null;
+
+// Load saved data from localStorage
+const savedData = localStorage.getItem("applications");
+
+if (savedData) {
+    data = JSON.parse(savedData);
+    renderList();
+}
 
 
 //Form validation (function)------------
@@ -89,6 +100,7 @@ function renderList() {
             <button class="edit-btn">Edit</button>
             <button class="delete-btn">Delete</button>
         `;
+        
 
         // Edit application button
         const editBtn = li.querySelector(".edit-btn");
@@ -106,6 +118,35 @@ function renderList() {
     });
 
     totalCount.textContent = data.length;
+
+
+    //Rejection count
+    let rejectedCount = 0;
+
+    data.forEach(function(item){
+        if(item.status === "Rejected"){
+            rejectedCount++
+        }
+    });
+    rejCount.textContent = rejectedCount;
+
+    // Interviews count
+    let interviewsCount = 0;
+    data.forEach(function(item){
+        if(item.status === "Interview"){
+            interviewsCount++
+        }
+    })
+    intCount.textContent = interviewsCount;
+
+    //Other count
+    let otherCounter = 0
+    data.forEach(function(item){
+        if(item.status === "Other"){
+            otherCounter++
+        }
+    })
+    otherCount.textContent = otherCounter;
 }
 
 
@@ -130,19 +171,22 @@ function formDataStoring() {
         ? rejectionReason.value.trim() 
         : ""
     };
-    
+
 
     // If editing
     if (editIndex !== null) {
         data[editIndex] = formData;
         editIndex = null;
     } 
-    // If new
+    // If adding
     else {
         data.push(formData);
     }
 
     renderList();
+
+    // Save data to localStorage
+    localStorage.setItem("applications", JSON.stringify(data));
 
     form.reset();
     form.style.display = "none";
@@ -191,6 +235,9 @@ function deleteApplication(index) {
     data.splice(index, 1);
 
     renderList();
+
+    // Save data to localStorage
+    localStorage.setItem("applications", JSON.stringify(data));
 }
 
 
@@ -222,9 +269,11 @@ jobStatus.addEventListener("change", function() {
 
     if (jobStatus.value === "Rejected") {
         rejectionContainer.style.display = "block";
+
     } else {
         rejectionContainer.style.display = "none";
         rejectionReason.value = "";
     }
 
 });
+
