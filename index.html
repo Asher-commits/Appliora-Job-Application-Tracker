@@ -9,19 +9,26 @@
 
 </head>
 <body>
-    <!-- Top part header-->
-    <div class="top">
-            <h1>Appliora</h1>
-            <h5>Your job application tracker</h5>
-            <p>Welcome back<span id="userName"></span></p>
-        
-        <button id="plusAddApplicationBtn" class="align-right-top">+ Add Application</button>
-        <button id="signOutBtn" class="align-right-top"><i class="fa-solid fa-arrow-right-from-bracket"></i>Sign out</button>   
+    <!-- Top section header-->
+   <div class="top">
+    <h1>Appliora</h1>
+    <h5>Your job application tracker</h5>
+    <p>Welcome back<span id="userName"></span></p>
+
+    <div id="searchBar">
+        <input type="text" placeholder="Search a job..." id="searchInput">
+        <button id="searchBtn">Search</button>
     </div>
-    <!--header ends here--> 
+
+    <!-- Wrap buttons for top-right -->
+    <div class="top-buttons">
+        <button id="plusAddApplicationBtn">+ Add Application</button>
+        <button id="signOutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out</button>
+    </div>
+</div>
 
     <!-- Form -->
-     <form id="form" style="display: none;"> ------------
+     <form id="form" style="display: none;"> 
         <label for="compName">Company name *</label>
         <input type="text" id="compName">
 
@@ -66,7 +73,7 @@
        <button id="cancelBtn">Cancel</button>
      </form>
 
-    <!--Middle part-->
+    <!--Middle section-->
     <div class="middle">
         <div id="totalApplications">
             <h2>Total Applications</h2>
@@ -86,7 +93,7 @@
        </div>
 
 
-    <!--Bottom part-->
+    <!--Bottom section-->
     <div class="bottom" id="bottomm">
         <div id="bottom-will-hide">
        <h1><i class="fa-regular fa-file"></i></h1>

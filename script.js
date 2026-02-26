@@ -1,11 +1,17 @@
-// Getting all the HTML elements for DOM
+// =========================================
+// GET DOM ELEMENTS
+// =========================================
 
-//Top part
+// Top section
 const userName = document.getElementById("userName");
 const plusAddApplicationBtn = document.getElementById("plusAddApplicationBtn");
 const signOutBtn = document.getElementById("signOutBtn");
 
-//Form
+// Search section
+const searchInput = document.getElementById("searchInput");
+const searchBtn = document.getElementById("searchBtn");
+
+// Form
 const form = document.getElementById("form");
 const compName = document.getElementById("compName");
 const position = document.getElementById("position");
@@ -16,80 +22,73 @@ const resume = document.getElementById("resume");
 const message = document.getElementById("message");
 const addApplicationBtn = document.getElementById("addApplicationBtn");
 const cancelBtn = document.getElementById("cancelBtn");
-
 const rejectionContainer = document.getElementById("rejectionContainer");
 const rejectionReason = document.getElementById("rejectionReason");
 
-//Middle part
-const totalApplications = document.getElementById("totalApplications");
-const interviews = document.getElementById("interviews");
-const rejected = document.getElementById("rejected");
-const other = document.getElementById("other");
-const totalCount = document.getElementById("count");
-const rejCount = document.getElementById("rej-count")
-const intCount = document.getElementById("int-count")
-const otherCount =  document.getElementById("other-count")
-
-
-//Bottom part
-const bottomm = document.getElementById("bottomm");
-const displayList = document.getElementById("displayList");
+// Containers
 const bottomWillhide = document.getElementById("bottom-will-hide");
+const displayList = document.getElementById("displayList");
 
+// Status counters
+const totalCount = document.getElementById("count");
+const rejCount = document.getElementById("rej-count");
+const intCount = document.getElementById("int-count");
+const otherCount = document.getElementById("other-count");
 
-// Storage for form data
-let data = [];
-let editIndex = null;
+// Search results container
+const searchResultsContainer = document.createElement("ul");
+searchResultsContainer.id = "searchResultsList";                        // =========================================
+                                                                        // NEED CHECK AND FIX
+                                                                        // =========================================    
+searchResultsContainer.style.display = "none";
+document.getElementById("bottomm").appendChild(searchResultsContainer);
 
-// Load saved data from localStorage
+// =========================================
+// STORAGE
+// =========================================
+let data = [];          // Manual/applied jobs
+let apiResults = [];    // API search results
+let editIndex = null;   // For editing manual jobs
+
+// Load manual applications from localStorage
 const savedData = localStorage.getItem("applications");
-
 if (savedData) {
     data = JSON.parse(savedData);
     renderList();
 }
 
-
-//Form validation (function)------------
-
-function formValidation(){
-
-if(compName.value === ""){
-    alert("Please enter company name");
-    return false;
+// =========================================
+// FORM VALIDATION
+// =========================================
+function formValidation() {
+    if (compName.value.trim() === ""){ 
+        alert("Please enter company name"); 
+        return false; 
+    }
+    if (position.value.trim() === ""){ 
+        alert("Please enter position"); 
+        return false; 
+    }
+    if (date.value.trim() === ""){ 
+        alert("Please select date");
+         return false; 
+        }
+    return true;
 }
 
-if(position.value === ""){
-    alert("Please enter company position applying for");
-    return false;
-}
-
-if(date.value === ""){
-    alert("Please select date of apply")
-    return false;
-}
-return true;
-
-}
-
-// ===============================
-// Render List 
-// ===============================
-
+// =========================================
+// RENDER MANUAL APPLICATIONS
+// =========================================
 function renderList() {
-
     displayList.innerHTML = "";
-
     if (data.length === 0) {
         bottomWillhide.style.display = "block";
     } else {
         bottomWillhide.style.display = "none";
     }
 
-    data.forEach(function(item, index) {
-
+    data.forEach((item, index) => {
         const li = document.createElement("li");
-
         li.innerHTML = `
             <strong>${item.company}</strong><br>
             <strong>${item.position}</strong><br>
@@ -100,64 +99,27 @@ function renderList() {
             <button class="edit-btn">Edit</button>
             <button class="delete-btn">Delete</button>
         `;
-        
 
-        // Edit application button
-        const editBtn = li.querySelector(".edit-btn");
-        editBtn.addEventListener("click", function() {
-            loadFormForEdit(index);
-        });
-
-        // Delete button
-        const deleteBtn = li.querySelector(".delete-btn");
-        deleteBtn.addEventListener("click", function() {
-            deleteApplication(index);
-        });
+        li.querySelector(".edit-btn").addEventListener("click", () => loadFormForEdit(index));
+        li.querySelector(".delete-btn").addEventListener("click", () => deleteApplication(index));
 
         displayList.appendChild(li);
     });
 
+    // Status counts
     totalCount.textContent = data.length;
-
-
-    //Rejection count
-    let rejectedCount = 0;
-
-    data.forEach(function(item){
-        if(item.status === "Rejected"){
-            rejectedCount++
-        }
-    });
-    rejCount.textContent = rejectedCount;
-
-    // Interviews count
-    let interviewsCount = 0;
-    data.forEach(function(item){
-        if(item.status === "Interview"){
-            interviewsCount++
-        }
-    })
-    intCount.textContent = interviewsCount;
-
-    //Other count
-    let otherCounter = 0
-    data.forEach(function(item){
-        if(item.status === "Other"){
-            otherCounter++
-        }
-    })
-    otherCount.textContent = otherCounter;
+    rejCount.textContent = data.filter(job => job.status === "Rejected").length;
+    intCount.textContent = data.filter(job => job.status === "Interview").length;
+    otherCount.textContent = data.filter(job => job.status === "Other").length;
 }
 
-
-// ===============================
-// Add / Update Application
-// ===============================
-
+// =========================================
+// ADD or EDIT / UPDATE APPLICATION (data)
+// =========================================
 function formDataStoring() {
-
-    if (!formValidation()) return;
-
+    if(!formValidation()){
+        return;     
+    }
 
     const formData = {
         company: compName.value.trim(),
@@ -167,40 +129,27 @@ function formDataStoring() {
         date: date.value,
         resume: resume.value.trim(),
         notes: message.value.trim(),
-        rejectionReason: jobStatus.value === "Rejected" 
-        ? rejectionReason.value.trim() 
-        : ""
+        rejectionReason: jobStatus.value === "Rejected" ? rejectionReason.value.trim() : ""
     };
 
-
-    // If editing
     if (editIndex !== null) {
         data[editIndex] = formData;
         editIndex = null;
-    } 
-    // If adding
-    else {
+    } else {
         data.push(formData);
     }
 
-    renderList();
-
-    // Save data to localStorage
     localStorage.setItem("applications", JSON.stringify(data));
-
     form.reset();
     form.style.display = "none";
+    renderList();
 }
 
-
-// ===============================
-// Load Data Into Form (Edit Mode)
-// ===============================
-
+// =========================================
+// LOAD FORM FOR EDITING
+// =========================================
 function loadFormForEdit(index) {
-
     const item = data[index];
-
     compName.value = item.company;
     position.value = item.position;
     jobType.value = item.type;
@@ -208,72 +157,129 @@ function loadFormForEdit(index) {
     date.value = item.date;
     resume.value = item.resume;
     message.value = item.notes;
-
-    if (item.status === "Rejected") {
-        rejectionContainer.style.display = "block";
-        rejectionReason.value = item.rejectionReason;
-    } else {
-        rejectionContainer.style.display = "none";
-        rejectionReason.value = "";
-    }
+    rejectionContainer.style.display = item.status === "Rejected" ? "block" : "none";
+    rejectionReason.value = item.rejectionReason || "";
 
     editIndex = index;
-    
-    //Change button text
-    addApplicationBtn.textContent = "Update Application"
-
+    addApplicationBtn.textContent = "Update Application";
     form.style.display = "block";
 }
 
-
-// ===============================
-// Delete Application
-// ===============================
-
+// =========================================
+// DELETE APPLICATION
+// =========================================
 function deleteApplication(index) {
-
     data.splice(index, 1);
-
-    renderList();
-
-    // Save data to localStorage
     localStorage.setItem("applications", JSON.stringify(data));
+    renderList();
 }
 
+// =========================================
+// API SEARCH (function)
+// =========================================
+async function searchJobs(query) {
+    // Show "Please wait..." before starting the fetch
+    searchResultsContainer.style.display = "block";
+    displayList.style.display = "none";
+    searchResultsContainer.innerHTML = "<li>Loading, please wait...</li>";
 
-// ===============================
-// Event Listeners
-// ===============================
+    const url = `https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(query)}&page=1&num_pages=1&country=us&date_posted=all`;
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': 'f545056ed1msh6b323ae063a13e4p1f0e6bjsn766ed6d040a1',
+            'X-RapidAPI-Host': 'jsearch.p.rapidapi.com'
+        }
+    };
 
-// Show form
-plusAddApplicationBtn.addEventListener("click", function() {
+    try {
+        const response = await fetch(url, options);
+        const result = await response.json();
+
+        if (!result.data || result.data.length === 0) {
+            searchResultsContainer.innerHTML = "<li>No jobs found.</li>";
+            return;
+        }
+
+        apiResults = result.data;
+        renderSearchResults();  // Will replace the "Please wait..." message
+    } catch (error) {
+        console.error("Fetch error:", error);
+        searchResultsContainer.innerHTML = "<li>No jobs found.</li>";
+    }
+}
+// =========================================
+// RENDER API SEARCH RESULTS
+// =========================================
+function renderSearchResults() {
+    displayList.style.display = "none";
+    searchResultsContainer.style.display = "block";
+    searchResultsContainer.innerHTML = "";
+
+    apiResults.forEach((job) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+            <strong>${job.employer_name || "Unknown Company"}</strong><br>
+            <strong>${job.job_title || "Unknown Position"}</strong><br>
+            ${job.job_city || "Location not specified"}<br>
+            <button class="apply-btn">Apply</button>
+        `;
+
+
+        //Apply button event listener
+        li.querySelector(".apply-btn").addEventListener("click", function(){
+            openApplyForm(job);
+        })
+        searchResultsContainer.appendChild(li);
+    });
+}
+
+// =========================================
+// OPEN FORM TO APPLY API JOB
+// =========================================
+function openApplyForm(job) {
+    // Pre-fill the form with API data
+    compName.value = job.employer_name || "";
+    position.value = job.job_title || "";
+    jobType.value = job.job_employment_type || "Full-time";
+    jobStatus.value = "Applied";
+    date.value = "";  // User must select
+    resume.value = "";
+    message.value = job.job_city ? `Location: ${job.job_city}` : "";
+    rejectionContainer.style.display = "none";
+
+    editIndex = null; // New entry
+    addApplicationBtn.textContent = "Apply";
     form.style.display = "block";
-});
 
-// Cancel form
-cancelBtn.addEventListener("click", function(e) {
+    // Switch back to manual dashboard on submit
+    displayList.style.display = "block";
+    searchResultsContainer.style.display = "none";
+}
+
+// =========================================
+// EVENT LISTENERS
+// =========================================
+plusAddApplicationBtn.addEventListener("click", () => form.style.display = "block");
+
+cancelBtn.addEventListener("click", (e) => {
     e.preventDefault();
     form.reset();
     form.style.display = "none";
     editIndex = null;
 });
 
-// Submit form
-addApplicationBtn.addEventListener("click", function(e) {
+addApplicationBtn.addEventListener("click", (e) => {
     e.preventDefault();
     formDataStoring();
 });
 
-//Rejection event listener
-jobStatus.addEventListener("change", function() {
-
-    if (jobStatus.value === "Rejected") {
-        rejectionContainer.style.display = "block";
-
-    } else {
-        rejectionContainer.style.display = "none";
-        rejectionReason.value = "";
-    }
-
+jobStatus.addEventListener("change", () => {
+    rejectionContainer.style.display = jobStatus.value === "Rejected" ? "block" : "none";
 });
 
+searchBtn.addEventListener("click", () => {
+    const query = searchInput.value.trim();
+    if (query === "") { alert("Please enter a job to search"); return; }
+    searchJobs(query);
+});
