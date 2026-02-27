@@ -3,6 +3,10 @@
     padding: 0px;
 }
 
+body {
+    font-family: 'Inter', sans-serif;
+}
+
 #top {
     display: flex;
     justify-content: space-between;
