@@ -370,8 +370,9 @@ submitMsg.addEventListener("click", function(e){
     
     if(success){
         contactForm.reset()
-        contactForm.style.display = "none"
+        contactForm.style.display = "none";
+        contactBtn.style.display = "block";
+        
     }
-    
-    window.location.reload();
+   
 })
