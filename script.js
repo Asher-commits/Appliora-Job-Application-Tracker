@@ -37,11 +37,19 @@ const otherCount = document.getElementById("other-count");
 
 // Search results container
 const searchResultsContainer = document.createElement("ul");
-searchResultsContainer.id = "searchResultsList";                        // =========================================
-                                                                        // NEED CHECK AND FIX
-                                                                        // =========================================    
+searchResultsContainer.id = "searchResultsList";                          
 searchResultsContainer.style.display = "none";
 document.getElementById("bottomm").appendChild(searchResultsContainer);
+
+
+// Contact form
+const contactBtn = document.getElementById("contactBtn");
+const contactForm = document.getElementById("contactForm");
+const name = document.getElementById("name");
+const email = document.getElementById("email");
+const subject = document.getElementById("subject");
+const messageMe = document.getElementById("messageMe");
+const submitMsg = document.getElementById("submitMsg");
 
 // =========================================
 // STORAGE
@@ -49,6 +57,7 @@ document.getElementById("bottomm").appendChild(searchResultsContainer);
 let data = [];          // Manual/applied jobs
 let apiResults = [];    // API search results
 let editIndex = null;   // For editing manual jobs
+let contactStorage = [] // For contact form
 
 // Load manual applications from localStorage
 const savedData = localStorage.getItem("applications");
@@ -100,8 +109,13 @@ function renderList() {
             <button class="delete-btn">Delete</button>
         `;
 
-        li.querySelector(".edit-btn").addEventListener("click", () => loadFormForEdit(index));
-        li.querySelector(".delete-btn").addEventListener("click", () => deleteApplication(index));
+        li.querySelector(".edit-btn").addEventListener("click", function(){
+            loadFormForEdit(index);
+        });
+
+        li.querySelector(".delete-btn").addEventListener("click", function(){
+            deleteApplication(index);
+        });
 
         displayList.appendChild(li);
     });
@@ -257,6 +271,66 @@ function openApplyForm(job) {
     searchResultsContainer.style.display = "none";
 }
 
+
+
+// =========================================
+// CONTACT FORM
+// =========================================
+
+// Validate contact form (function)
+
+function validateContactForm(){
+    if(name.value.trim() === ""){
+        return false;
+    }
+
+    if(email.value.trim() === ""){
+        return false;
+    }
+
+    if(subject.value.trim() === ""){
+        return false;
+    }
+
+    if(messageMe.value.trim() === ""){
+        return false;
+    }
+
+   // Check email format
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!emailPattern.test(email.value.trim())){
+        alert("Please enter a valid email address.");
+        return false;
+    }
+    return true;
+}
+
+
+
+// Store contact form inputs (function)
+function contactFormDataStoring(){
+
+    //Check if form is filled
+if(!validateContactForm()){
+    alert("Please fill out all the fields");
+    return false;
+}
+
+const contactFormInfo = {
+    name: name.value.trim(),
+    email: email.value.trim(),
+    subject: subject.value.trim(),
+    message: messageMe.value.trim()
+}
+
+contactStorage.push(contactFormInfo)
+
+return true;
+
+}
+
+
+
 // =========================================
 // EVENT LISTENERS
 // =========================================
@@ -283,3 +357,21 @@ searchBtn.addEventListener("click", () => {
     if (query === "") { alert("Please enter a job to search"); return; }
     searchJobs(query);
 });
+
+contactBtn.addEventListener("click", function(){
+    contactForm.style.display = "block";
+    contactBtn.style.display = "none";
+
+})
+
+submitMsg.addEventListener("click", function(e){
+    e.preventDefault()
+    const success = contactFormDataStoring()
+    
+    if(success){
+        contactForm.reset()
+        contactForm.style.display = "none"
+    }
+    
+    window.location.reload();
+})

@@ -7,13 +7,20 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+<!--font-->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
 </head>
+
 <body>
-    <!-- Top section header-->
-   <div class="top">
+
+<!-- Top section header-->
+     <div id="top">
+   <div class="top-left">
     <h1>Appliora</h1>
-    <h5>Your job application tracker</h5>
+    <h6>Your job application tracker</h6>
     <p>Welcome back<span id="userName"></span></p>
+    </div>
 
     <div id="searchBar">
         <input type="text" placeholder="Search a job..." id="searchInput">
@@ -25,9 +32,11 @@
         <button id="plusAddApplicationBtn">+ Add Application</button>
         <button id="signOutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out</button>
     </div>
-</div>
+     </div>
+<!-- Top section header ends here-->
 
-    <!-- Form -->
+
+<!-- Form -->
      <form id="form" style="display: none;"> 
         <label for="compName">Company name *</label>
         <input type="text" id="compName">
@@ -42,7 +51,6 @@
             <option>Full-time</option>
             <option>Part-time</option>
             <option>Contract</option>
-
         </select>
 
         <label for="jobStatus">Status</label>
@@ -53,12 +61,13 @@
             <option>Other</option>
         </select>
       
-      
-        <div id="rejectionContainer" style="display:none;">
+    <!--If user selects rejected from the options-->
+    <div id="rejectionContainer" style="display:none;">
     <label for="rejectionReason">Rejection Reason:</label>
     <textarea id="rejectionReason" rows="3"></textarea>
-</div>
+    </div>
 
+        
         <label for="date">Application Date</label>
         <input type="date" id="date">
 
@@ -68,39 +77,76 @@
         <label for="message">Notes</label>
         <textarea id="message" name="message" rows="4" cols="50"></textarea>
 
-
+    <!--Buttons-->
        <button id="addApplicationBtn">Add Application</button>
        <button id="cancelBtn">Cancel</button>
      </form>
 
-    <!--Middle section-->
+<!--Form ends here-->
+
+<!--Middle section-->
     <div class="middle">
         <div id="totalApplications">
             <h2>Total Applications</h2>
-            <span id="count"> 0</span>
+            <span id="count"></span>
         </div>
+
         <div id="interviews">
             <h2>Interviews</h2>
-            <span id="int-count"> 0</i></span>
+            <span id="int-count"></i></span>
         </div>
+
         <div id="rejected">
             <h2>Rejected</h2>
-            <span id="rej-count"> 0</span>
+            <span id="rej-count"></span>
        </div>
+
        <div id="other">
            <h2>Other</h2>
-           <span id="other-count"> 0</span>
+           <span id="other-count"></span>
        </div>
+    </div>
+
+<!--Middle section ends here-->
 
 
-    <!--Bottom section-->
+<!--Bottom section-->
     <div class="bottom" id="bottomm">
         <div id="bottom-will-hide">
        <h1><i class="fa-regular fa-file"></i></h1>
        <h3>No applications yet</h3>
        <p>Start tracking your job application by clicking the "Add Application" button above</p>
        </div>
+       
+       <!--To show added applications-->
        <ul id="displayList"></ul>
+    </div>
+
+
+<!--Contact form-->
+    <footer id="footer">
+        <button id="contactBtn">Contact me</button>
+
+        <!--form-->
+        <form id="contactForm" style="display: none;">
+            <label for="name">Name: </label>
+            <input id="name" type="text">
+
+            <label for="email">Email: </label>
+            <input type="email" id="email">
+
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject">
+
+            <label for="messageMe"> Message: </label>
+            <textarea id="messageMe" name="message" rows="4" cols="50"></textarea>
+            <button id="submitMsg">Submit</button>
+            <button id="cancelBtn">Cancel</button>   
+        </form>
+
+    </footer>
+
+<!--Linking JS file-->
     <script src="script.js"></script>
 </body>
 </html>
